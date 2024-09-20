@@ -18,9 +18,9 @@ The result:
 |mendie alexandrescu|46|single|malexandrescu8@state.gov|504-918-4753|34 Delladonna Terrace,New Orleans,Louisiana|Systems Administrator III|3/12/1921|
 | fey kloss|52|married|fkloss9@godaddy.com|808-177-0318|8976 Jackson Park,Honolulu,Hawaii|Chemical Engineer|11/5/2014|
 
-Copy the table
-------------
-###Create a new table for cleaning
+#Copy the table
+
+**Create a new table for cleaning**
 
 Let's generate a new table where we can manipulate and restructure the data without modifying the original dataset.
 
@@ -35,7 +35,7 @@ Let's generate a new table where we can manipulate and restructure the data with
 	    membership_date VARCHAR(50)
     );
 
-###Copy all values from original table
+**Copy all values from original table**
 
     INSERT INTO club_member_info_cleaned
     SELECT * FROM club_member_info;
