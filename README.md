@@ -43,6 +43,12 @@ Let's generate a new table where we can manipulate and restructure the data with
 # Clean data and document it
 
 **Inconsistent letter case**
+- Full_name column:
+Remove whitespace characters before and after the string
+
+    UPDATE club_member_info_cleaned 
+    SET full_name = TRIM(full_name);
+
 
 
  
