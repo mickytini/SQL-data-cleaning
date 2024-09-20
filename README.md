@@ -40,5 +40,9 @@ Let's generate a new table where we can manipulate and restructure the data with
     INSERT INTO club_member_info_cleaned
     SELECT * FROM club_member_info;
 
+# Clean data and document it
+
+**Inconsistent letter case**
+
 
  
