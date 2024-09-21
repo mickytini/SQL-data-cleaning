@@ -42,18 +42,17 @@ Let's generate a new table where we can manipulate and restructure the data with
 
 # Clean data and document it
 
-**Inconsistent letter case**
-- Full_name column:
-Remove whitespace characters before and after the string
+- Full_name column: Inconsistent letter case
+   Remove whitespace characters before and after the string
 
       UPDATE club_member_info_cleaned
       SET full_name = TRIM(full_name);
 
-Reformat string
+   Reformat string
 
-    UPDATE table_name
-    SET full_name = UPPER(SUBSTR(full_name, 1, 1)) || LOWER(SUBSTR(full_name, 2))
-    WHERE full_name IS NOT NULL;
+      UPDATE table_name
+      SET full_name = UPPER(SUBSTR(full_name, 1, 1)) || LOWER(SUBSTR(full_name, 2))
+      WHERE full_name IS NOT NULL;
 
 The result:
 |full_name|age|martial_status|email|phone|full_address|job_title|membership_date|
@@ -70,13 +69,13 @@ The result:
 |Fey kloss|52|married|fkloss9@godaddy.com|808-177-0318|8976 Jackson Park,Honolulu,Hawaii|Chemical Engineer|11/5/2014|
 
 - Age column:
-Age out of realistic range
+   Age out of realistic range
 
       UPDATE club_member_info_cleaned 
       SET age = SUBSTR(age , 1, 2)
       WHERE LENGTH(age) > 2;
 
-The data in the cell must only have 2 digits from 0 to 99. If there are 3 or more digits, only the first 2 numbers will be taken. If the cell is empty, replace it with the number 40.
+   The data in the cell must only have 2 digits from 0 to 99. If there are 3 or more digits, only the first 2 numbers will be taken. If the cell is empty, replace it with the number 40 (median).
 
       UPDATE club_member_info_cleaned 
       SET age = CASE
@@ -85,12 +84,95 @@ The data in the cell must only have 2 digits from 0 to 99. If there are 3 or mor
       ELSE age
       END;
 
-If any cell is blank, fill in the number: 34
+   If any cell is blank, fill in the number: 40 (median)
 
-    UPDATE club_member_info_cleaned
-    SET age = 34
-    WHERE age IS NULL OR age = '';
+      UPDATE club_member_info_cleaned
+      SET age = 40
+      WHERE age IS NULL OR age = '';
 
-- Martial_status column:
+- Martial_status column: If any cell is blank (no data), fill in: "single"
 
+      UPDATE club_member_info_cleaned 
+      SET martial_status = 'single'
+      WHERE martial_status IS NULL OR martial_status = '';
 
+- Phone column: If any cell is blank (no data), fill in: "NULL"
+
+      UPDATE club_member_info_cleaned 
+      SET phone = 'NULL'
+      WHERE phone IS NULL OR phone = '';
+
+- Job_title column: If any cell is blank (no data), fill in: "NULL"
+
+      UPDATE club_member_info_cleaned 
+      SET job_title = 'NULL'
+      WHERE job_title IS NULL OR job_title = '';
+
+- Membership_date column: I found 16 members with join dates of **191x or 192x** - which doesn't seem right for their age. Please help me fix this data if possible :D
+
+# Clean up duplicate data
+
+- Full_name column:
+  
+      -- Identify the duplicates
+      SELECT full_name , COUNT(*)
+      FROM club_member_info_cleaned 
+      GROUP BY full_name 
+      HAVING COUNT(*) > 1;
+
+      -- Delete the duplicates while keeping only one occurrence
+      DELETE FROM club_member_info_cleaned
+      WHERE ROWID NOT IN (
+         SELECT MIN(ROWID)
+         FROM club_member_info_cleaned
+         GROUP BY full_name
+      );
+
+- Email column:
+
+      -- Identify the duplicates
+      SELECT email , COUNT(*)
+      FROM club_member_info_cleaned 
+      GROUP BY email 
+      HAVING COUNT(*) > 1;
+
+      -- Delete the duplicates while keeping only one occurrence
+      DELETE FROM club_member_info_cleaned
+      WHERE ROWID NOT IN (
+         SELECT MIN(ROWID)
+         FROM club_member_info_cleaned
+         GROUP BY email
+      );
+  
+- Phone column:
+
+      -- Identify the duplicates
+      SELECT phone , COUNT(*)
+      FROM club_member_info_cleaned 
+      GROUP BY phone 
+      HAVING COUNT(*) > 1;
+
+      -- Delete the duplicates while keeping only one occurrence
+      DELETE FROM club_member_info_cleaned
+      WHERE ROWID NOT IN (
+         SELECT MIN(ROWID)
+         FROM club_member_info_cleaned
+         GROUP BY phone
+      );
+
+- Full_address column:
+
+      -- Identify the duplicates
+      SELECT full_address , COUNT(*)
+      FROM club_member_info_cleaned 
+      GROUP BY phone 
+      HAVING COUNT(*) > 1;
+
+      -- Delete the duplicates while keeping only one occurrence
+      DELETE FROM club_member_info_cleaned
+      WHERE ROWID NOT IN (
+         SELECT MIN(ROWID)
+         FROM club_member_info_cleaned
+         GROUP BY full_address
+      );
+  
